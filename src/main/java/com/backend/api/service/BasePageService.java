@@ -1,8 +1,11 @@
 package com.backend.api.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-@Service
-public abstract class BasePageService {
-    public abstract int getTotalPages();
+import com.backend.api.model.PageDataCriteria;
+
+public interface  BasePageService<T , ID> {
+     T save(T entity) throws Exception;    		
+     void delete(long id) throws Exception;		
+     List<T> getData(PageDataCriteria criteria) throws Exception;		
 }
