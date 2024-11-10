@@ -68,7 +68,7 @@ public class SqlParam {
         this.inclusif = "and " ; 
     }
     
-    public void buildSqlCondition()
+    public void buildCondition()
     {
         if(this.value instanceof Integer && this.value != null )
         { 

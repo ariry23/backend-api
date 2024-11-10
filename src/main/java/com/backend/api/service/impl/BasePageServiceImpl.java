@@ -10,23 +10,27 @@ import com.backend.api.annotation.JpaQualifier;
 import com.backend.api.entity.BaseEntity;
 import com.backend.api.model.PageDataCriteria;
 import com.backend.api.service.BasePageService;
+import com.backend.api.util.UtilSql;
+import java.util.Map;
 
 @Service
-public abstract  class BasePageServiceImpl<T extends BaseEntity, ID>implements BasePageService<T, ID>{
-    private final ApplicationContext context;
-    private  JpaRepository<T, ID> baseRepository;
+public abstract  class BasePageServiceImpl<T, ID>implements BasePageService<T, ID>{
+    protected  ApplicationContext context;
+    protected  JpaRepository<T, ID> baseRepository;
     
     public void setRepository(String qualifier) {
-        this.baseRepository = (JpaRepository<T, ID>) context.getBean(qualifier);
+        this.baseRepository = (JpaRepository<T, ID>) this.context.getBean(qualifier);
     }
     
-    public BasePageServiceImpl(ApplicationContext context) {
-        this.context = context;
-        this.setRepository(getJpaQualifierValue());
+    
+    protected void injectDependency(ApplicationContext context)
+    {
+        this.context = context ; 
+        this.setRepository(this.getJpaQualifierValue());
     }
     
-    private  String getJpaQualifierValue() {
-        JpaQualifier annotation = BasePageServiceImpl.class.getAnnotation(JpaQualifier.class);
+    protected String getJpaQualifierValue() {
+        JpaQualifier annotation = this.getClass().getAnnotation(JpaQualifier.class);
         if (annotation != null) {
             return annotation.value();
         }
@@ -42,9 +46,14 @@ public abstract  class BasePageServiceImpl<T extends BaseEntity, ID>implements B
     	this.baseRepository.deleteById(id);
     }
     
-    
-    public List<T> getData(PageDataCriteria criteria)
+    public List<T> getAllData()
     {
-    	return null;
+        return this.baseRepository.findAll();
+    }
+    
+    public List<T> search(Map<String , Object> requestParam)
+    {
+        UtilSql.convertJsonToSqlParamArray(requestParam) ; 
+        return null ; 
     }
 }

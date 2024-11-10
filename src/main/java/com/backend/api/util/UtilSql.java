@@ -27,7 +27,7 @@ public class UtilSql {
         return mapArray ; 
     }
     
-    public List<SqlParam> convertJsonToSqlParamArray(Map<String, Object> jsonData) {
+    public static List<SqlParam> convertJsonToSqlParamArray(Map<String, Object> jsonData) {
         List<SqlParam> sqlParamList = new ArrayList<SqlParam>() ; 
         for (Map.Entry<String, Object> entry : jsonData.entrySet()) {
             String key = entry.getKey(); 	
@@ -42,7 +42,6 @@ public class UtilSql {
                 } else {
                     param.setComparator("=");
                 }
-                
             }
             else if(param.getValue() instanceof String &&  param.getValue().toString().contains("dateInput") || param.getValue().toString().contains("dateTimeInput"))
             {
@@ -57,8 +56,6 @@ public class UtilSql {
             {
                 param.setComparator("like");
             }
-            
-            
             sqlParamList.add(param);
           
         }
