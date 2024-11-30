@@ -5,7 +5,7 @@ public class SqlParam {
     private Object value ; 
     private String inclusif ; 
     private String condition ; 
-    private boolean isIgnoreCase ; 
+    private boolean ignoreCase ; 
     public String getColumn() {
         return column;
     }
@@ -31,13 +31,13 @@ public class SqlParam {
 		this.value = value;
 	}
 
-	public boolean isIgnoreCase() {
-		return isIgnoreCase;
-	}
+    public boolean isIgnoreCase() {
+        return ignoreCase;
+    }
 
-	public void setIgnoreCase(boolean isIgnoreCase) {
-		this.isIgnoreCase = isIgnoreCase;
-	}
+    public void setIgnoreCase(boolean ignoreCase) {
+        this.ignoreCase = ignoreCase;
+    }
 
 	public String getInclusif() {
         return inclusif;
@@ -56,15 +56,15 @@ public class SqlParam {
     }
 
     public boolean isIsIgnoreCase() {
-        return isIgnoreCase;
+        return ignoreCase;
     }
 
     public void setIsIgnoreCase(boolean isIgnoreCase) {
-        this.isIgnoreCase = isIgnoreCase;
+        this.ignoreCase = isIgnoreCase;
     }
     
     public SqlParam() {
-        this.isIgnoreCase = true ; 
+        this.ignoreCase = true ; 
         this.inclusif = "and " ; 
     }
     
@@ -90,7 +90,7 @@ public class SqlParam {
                 String formatedValue = (String) this.value ; 
                 this.comparator = " like ";  
                 String formatedColumn = this.column ; 
-                if(this.isIgnoreCase)
+                if(this.ignoreCase)
                 {
                    formatedColumn =  "lower(" + this.column + ") " ;   
                    formatedValue = "lower('%" + this.value + "%') ";

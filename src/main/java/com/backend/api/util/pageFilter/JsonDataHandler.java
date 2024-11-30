@@ -5,8 +5,9 @@
 package com.backend.api.util.pageFilter;
 import com.backend.api.model.MyEntry;
 import com.backend.api.model.SqlParam;
+import java.util.Map;
 
 public interface JsonDataHandler {
     void setNext(JsonDataHandler handler);  
-    SqlParam handleRequest(MyEntry<String , Object> entry);
+    Object handleRequest(Map.Entry<String , Object> entry);
 }

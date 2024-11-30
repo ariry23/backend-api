@@ -8,20 +8,30 @@ import org.springframework.stereotype.Service;
 
 import com.backend.api.annotation.JpaQualifier;
 import com.backend.api.entity.BaseEntity;
+import com.backend.api.model.ListOrder;
 import com.backend.api.model.PageDataCriteria;
+import com.backend.api.model.SqlParam;
 import com.backend.api.service.BasePageService;
 import com.backend.api.util.UtilSql;
+import com.backend.api.util.pageFilter.IntegerHandler;
+import com.backend.api.util.pageFilter.JsonDataHandler;
+import com.backend.api.util.pageFilter.OrderHandler;
+import com.backend.api.util.pageFilter.StringHandler;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Service
 public abstract  class BasePageServiceImpl<T, ID>implements BasePageService<T, ID>{
     protected  ApplicationContext context;
     protected  JpaRepository<T, ID> baseRepository;
-    
+    protected  Object listEntity ; 
     public void setRepository(String qualifier) {
         this.baseRepository = (JpaRepository<T, ID>) this.context.getBean(qualifier);
     }
-    
+    protected void setListEntity(Object listEntity)
+    {
+        this.listEntity=listEntity ; 
+    }
     
     protected void injectDependency(ApplicationContext context)
     {
@@ -51,9 +61,29 @@ public abstract  class BasePageServiceImpl<T, ID>implements BasePageService<T, I
         return this.baseRepository.findAll();
     }
     
-    public List<T> search(Map<String , Object> requestParam)
+    public List<SqlParam> search(Map<String , Object> requestParam)
     {
-        UtilSql.convertJsonToSqlParamArray(requestParam) ; 
-        return null ; 
+        
+        StringHandler stringHandler = new StringHandler() ; 
+        IntegerHandler integerHandler = new  IntegerHandler(); 
+        OrderHandler orderHandler = new OrderHandler() ; 
+        stringHandler.setNext(integerHandler);
+        integerHandler.setNext(orderHandler);
+        List<SqlParam> sqlParamList = new ArrayList<SqlParam>() ; 
+       
+        PageDataCriteria pageDataCriteria = new PageDataCriteria();
+        for (Map.Entry<String, Object> entry : requestParam.entrySet()) {            
+            if(stringHandler.handleRequest(entry) instanceof SqlParam) 
+            {
+                sqlParamList.add((SqlParam) stringHandler.handleRequest(entry));
+            }
+            else if(stringHandler.handleRequest(entry) instanceof ListOrder) 
+            {
+                pageDataCriteria.setListOrder((ListOrder) stringHandler.handleRequest(entry));
+            }    
+        }
+        pageDataCriteria.setSqlParamList(sqlParamList);        
+        //UtilSql.convertJsonToSqlParamArray(requestParam) ; 
+        return sqlParamList ; 
     }
 }
